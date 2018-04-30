@@ -1,0 +1,94 @@
+local js = require "js"
+local global = js.global
+local document = global.document
+local canvas = document:getElementById("canvas")
+local ctx = canvas:getContext("2d")
+flag_w = 600
+flag_h = 300
+circle_x = flag_w/4
+circle_y = flag_h/4
+ctx.fillStyle='rgb(255, 0, 0)'
+ctx:fillRect(0, 0, flag_w, flag_h)
+ctx.fillStyle='rgb(0, 0, 150)'
+ctx:fillRect(0, 0, flag_w*2/5, flag_h*7/13)
+ctx.fillStyle='rgb(999, 999, 999)'
+ctx:fillRect(240,22, flag_w,flag_h/13)
+ctx.fillStyle='rgb(999, 999, 999)'
+ctx:fillRect(240,66, flag_w, flag_h/13)
+ctx.fillStyle='rgb(999, 999, 999)'
+ctx:fillRect(240,110, flag_w, flag_h/13)
+ctx.fillStyle='rgb(999, 999, 999)'
+ctx:fillRect(0,160, flag_w, flag_h/13)
+ctx.fillStyle='rgb(999, 999, 999)'
+ctx:fillRect(0,210, flag_w, flag_h/13)
+ctx.fillStyle='rgb(999, 999, 999)'
+ctx:fillRect(0,255, flag_w, flag_h/13)
+function draw_line(x1, y1, x2, y2, color)
+color = color or "#fff"
+ctx:beginPath()
+ctx:moveTo(x1, y1)
+ctx:lineTo(x2, y2)
+ctx.strokeStyle = color
+ctx:stroke()
+end
+
+
+function star(x, y, r, angle, solid, color)
+angle = angle or 0
+solid = solid or false
+color = color or "#f00"
+local deg = math.pi/180
+
+local a = r*math.cos(72*deg)
+
+local b = (r*math.cos(72*deg)/math.cos(36*deg))*math.sin(36*deg)
+
+rin = math.sqrt(a*a + b*b)
+
+if (solid) then
+ctx:beginPath()
+end
+for i = 0, 4 do
+xout = (x + r*math.sin((360/5)*deg*i+angle*deg))
+yout = (y + r*math.cos((360/5)*deg*i+angle*deg))
+
+xout2 = x + r*math.sin((360/5)*deg*(i+1)+angle*deg)
+yout2 = y + r*math.cos((360/5)*deg*(i+1)+angle*deg)
+xin = x + rin*math.sin((360/5)*deg*i+36*deg+angle*deg)
+yin = y + rin*math.cos((360/5)*deg*i+36*deg+angle*deg)
+
+if (solid) then
+
+if (i==0) then
+ctx:moveTo(xout, yout)
+ctx:lineTo(xin, yin)
+ctx:lineTo(xout2, yout2)
+else
+ctx:lineTo(xin, yin)
+ctx:lineTo(xout2, yout2)
+end
+else
+
+draw_line(xout, yout, xin, yin, color)
+
+draw_line(xout2, yout2, xin, yin, color)
+end
+end
+
+if (solid) then
+ctx.fillStyle = color
+ctx:fill()
+end
+end
+
+--star(300, 300, 50, 0, false, "#000")
+for i = 0, 5 do
+for j = 0, 4 do
+star(13+42*i, 11+35*j, 9, 35, true, "#fff")
+end
+end
+
+for i = 0, 4 do
+for j = 0, 3 do
+star(33+42*i,28+35*j, 9, 35, true, "#fff")
+end
