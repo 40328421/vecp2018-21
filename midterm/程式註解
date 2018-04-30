@@ -1,0 +1,150 @@
+
+<group>
+<group layout="grid">
+<label text="<big> Arm 2:</big>" id="6005" wordwrap="false" style="font-weight: bold;"/>
+<label text="Reference =  0.000" id="3005" wordwrap="false" />
+<!-- <label text="Actual =  0.000" id="5005" wordwrap="false" /> -->
+</group>
+<hslider id="4005" tick-position="above" tick-interval="222" minimum="-1117" maximum="1553" onchange="sliderChange" />
+<group layout="grid">
+<label text="Enter joint angle (rad):" />
+<edit value="" id="7005" oneditingfinished="jointEntry" />
+</group>
+</group>
+
+<br/>
+
+<group>
+<group layout="grid">
+<label text="<big> Chassis Y:</big>" id="6002" wordwrap="false" style="font-weight: bold;"/>
+<label text="Reference =  0.000" id="3002" wordwrap="false" />
+<!-- <label text="Actual =  0.000" id="5002" wordwrap="false" /> -->
+</group>
+<hslider id="4002" tick-position="above" tick-interval="333" minimum="-2000" maximum="2000" onchange="sliderChange" />
+<group layout="grid">
+<label text="Enter position (m):" />
+<edit value="" id="7002" oneditingfinished="jointEntry" />
+</group>
+</group>
+
+
+<group>
+<group layout="grid">
+<label text="<big> Arm 3:</big>" id="6006" wordwrap="false" style="font-weight: bold;"/>
+<label text="Reference =  0.000" id="3006" wordwrap="false" />
+<!-- <label text="Actual =  0.000" id="5006" wordwrap="false" /> -->
+</group>
+<hslider id="4006" tick-position="above" tick-interval="429" minimum="-2620" maximum="2530" onchange="sliderChange" />
+<group layout="grid">
+<label text="Enter joint angle (rad):" />
+<edit value="" id="7006" oneditingfinished="jointEntry" />
+</group>
+</group>
+
+<br/>
+
+<group>
+<group layout="grid">
+<label text="<big> Chassis Ï�:</big>" id="6003" wordwrap="false" style="font-weight: bold;"/>
+<label text="Reference =  0.000" id="3003" wordwrap="false" />
+<!-- <label text="Actual =  0.000" id="5003" wordwrap="false" /> -->
+</group>
+<hslider id="4003" tick-position="above" tick-interval="523" minimum="-3140" maximum="3140" onchange="sliderChange" />
+<group layout="grid">
+<label text="Enter joint angle (rad):" />
+<edit value="" id="7003" oneditingfinished="jointEntry" />
+</group>
+</group>
+
+<group>
+<group layout="grid">
+<label text="<big> Arm 4:</big>" id="6007" wordwrap="false" style="font-weight: bold;"/>
+<label text="Reference =  0.000" id="3007" wordwrap="false" />
+<!-- <label text="Actual =  0.000" id="5007" wordwrap="false" /> -->
+</group>
+<hslider id="4007" tick-position="above" tick-interval="296" minimum="-1780" maximum="1780" onchange="sliderChange" />
+<group layout="grid">
+<label text="Enter joint angle (rad):" />
+<edit value="" id="7007" oneditingfinished="jointEntry" />
+</group>
+</group>
+
+<br/>
+
+<group>
+<group layout="grid">
+<label text="<big> Arm 1:</big>" id="6004" wordwrap="false" style="font-weight: bold;"/>
+<label text="Reference =  0.000" id="3004" wordwrap="false" />
+<!-- <label text="Actual =  0.000" id="5004" wordwrap="false" /> -->
+</group>
+<hslider id="4004" tick-position="above" tick-interval="488" minimum="-2932" maximum="2932" onchange="sliderChange" />
+<group layout="grid">
+<label text="Enter joint angle (rad):" />
+<edit value="" id="7004" oneditingfinished="jointEntry" />
+</group>
+</group>
+
+<group>
+<group layout="grid">
+<label text="<big> Arm 5:</big>" id="6008" wordwrap="false" style="font-weight: bold;"/>
+<label text="Reference =  0.000" id="3008" wordwrap="false" />
+<!-- <label text="Actual =  0.000" id="5008" wordwrap="false" /> -->
+</group>
+<hslider id="4008" tick-position="above" tick-interval="481" minimum="-2890" maximum="2890" onchange="sliderChange" />
+<group layout="grid">
+<label text="Enter joint angle (rad):" />
+<edit value="" id="7008" oneditingfinished="jointEntry" />
+</group>
+</group>
+
+</group>
+
+</tab>
+
+</tabs>
+</ui>
+]]
+ui=simExtCustomUI_create(xml)
+-- get joints:
+jh={-1,-1,-1,-1,-1,-1,-1,-1}
+jh[1]=simGetObjectHandle('World_X_Joint')
+jh[2]=simGetObjectHandle('World_Y_Joint')
+jh[3]=simGetObjectHandle('World_Th_Joint')
+for i=4,#jh,1 do
+jh[i]=simGetObjectHandle('Joint'..(i-3))
+end
+-- for i=1,#jh,1 do
+--    print(string.format("jh[%d] = %d",i,jh[i]))
+-- end
+-- base=simGetObjectHandle('ArmBase_Frame')
+world=simGetObjectHandle('WorldFrame')
+base=simGetObjectHandle('BaseVisual')
+ee=simGetObjectHandle('EE_Frame')
+-- fill out initial string:
+calcSE3(ui, 1234, ee, world)
+calcSE3(ui, 1235, base, world)
+-- array for reference angle
+ref_ang={0,0,0,0,0,0,0,0}
+-- array for storing when angles where manually entered
+enteredString=""
+-- angle parsing
+toggleRadians(ui,0,0)
+end
+
+
+if (sim_call_type==sim_childscriptcall_actuation) then
+applyJoints(jh, ref_ang)
+-- array for actual angle
+act_ang = getJoints(jh)
+updateActualText(jh, act_ang)
+calcSE3(ui, 1234, ee, world)
+calcSE3(ui, 1235, base, world)
+end
+
+if (sim_call_type==sim_childscriptcall_sensing) then
+
+end
+
+if (sim_call_type==sim_childscriptcall_cleanup) then
+simExtCustomUI_destroy(ui)
+endreturn "g_year=2018,g_month=2,g_day=25"
